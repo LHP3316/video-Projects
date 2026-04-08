@@ -59,14 +59,15 @@ function renderMainTabs() {
 function renderModelTabs() {
   modelTabs.innerHTML = "";
   const tab = activeTab();
-  featureSummary.textContent = tab ? tab.description : "";
+  featureSummary.textContent = tab?.description || "";
   featureSummary.classList.toggle("hidden", !tab?.description);
+
   tab?.models.forEach((model) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `tab-button ${model.id === state.activeModel ? "active" : ""}`;
     button.textContent = model.name;
-    button.title = model.description;
+    button.title = model.description || "";
     button.addEventListener("click", () => {
       state.activeModel = model.id;
       resetForm(false);
@@ -76,6 +77,16 @@ function renderModelTabs() {
   });
 }
 
+function setSourceLabel() {
+  if (state.activeFeature === "text_split") {
+    sourceLabel.textContent = "输入文案";
+  } else if (state.activeFeature === "text_to_image") {
+    sourceLabel.textContent = "画面补充说明（可选）";
+  } else {
+    sourceLabel.textContent = "上传图片";
+  }
+}
+
 function renderParameters() {
   parameterGrid.innerHTML = "";
   const model = activeModel();
@@ -83,29 +94,22 @@ function renderParameters() {
 
   document.body.dataset.feature = state.activeFeature || "";
   tokenField.classList.toggle("hidden", !!model.token_from_env);
-  tokenInput.placeholder = model.token_label;
+  tokenInput.placeholder = model.token_label || "填写当前模型的 API Token";
 
   const showPromptField = state.activeFeature === "text_to_image";
   promptField.classList.toggle("hidden", !showPromptField);
   if (showPromptField) {
-    promptLabel.textContent = model.prompt_label;
+    promptLabel.textContent = model.prompt_label || "提示词";
   } else {
     promptInput.value = "";
   }
 
-  if (state.activeFeature === "image_to_video") {
-    imageLimitTip.textContent = `当前模型要求上传 ${model.min_images || 1}-${model.max_images || 6} 张图片。`;
-  }
-
   imageUploadField.classList.toggle("hidden", state.activeFeature !== "image_to_video");
   sourceField.classList.toggle("hidden", state.activeFeature === "image_to_video");
+  setSourceLabel();
 
-  if (state.activeFeature === "text_split") {
-    sourceLabel.textContent = "输入文案";
-  } else if (state.activeFeature === "text_to_image") {
-    sourceLabel.textContent = "画面补充说明（可选）";
-  } else {
-    sourceLabel.textContent = "上传图片（支持多图）";
+  if (state.activeFeature === "image_to_video") {
+    imageLimitTip.textContent = `当前模型要求上传 ${model.min_images || 1}-${model.max_images || 6} 张图片。`;
   }
 
   if (!model.supports_real_api) {
@@ -115,9 +119,10 @@ function renderParameters() {
     parameterGrid.appendChild(warning);
   }
 
-  model.parameters.forEach((param) => {
+  (model.parameters || []).forEach((param) => {
     const label = document.createElement("label");
     label.className = `field ${param.type === "textarea" ? "full" : ""}`.trim();
+
     const span = document.createElement("span");
     span.textContent = param.label;
     label.appendChild(span);
@@ -125,11 +130,11 @@ function renderParameters() {
     let input;
     if (param.type === "select") {
       input = document.createElement("select");
-      param.options.forEach((option) => {
+      (param.options || []).forEach((option) => {
         const optionNode = document.createElement("option");
         optionNode.value = option;
         optionNode.textContent = option;
-        if (option === param.default) optionNode.selected = true;
+        if (String(option) === String(param.default)) optionNode.selected = true;
         input.appendChild(optionNode);
       });
     } else if (param.type === "boolean") {
@@ -204,6 +209,8 @@ function formatResultText(data) {
     lines.push(result.raw);
   } else if (result.message) {
     lines.push(result.message);
+  } else if (data?.message) {
+    lines.push(data.message);
   } else {
     lines.push(JSON.stringify(data, null, 2));
   }
@@ -213,10 +220,7 @@ function formatResultText(data) {
   if (data?.id) lines.push(`任务ID：${data.id}`);
   if (data?.model_name) lines.push(`模型：${data.model_name}`);
   if (data?.status) lines.push(`状态：${data.status}`);
-
-  if (remoteTaskId) {
-    lines.push(`Remote Task ID: ${remoteTaskId}`);
-  }
+  if (remoteTaskId) lines.push(`远端任务ID：${remoteTaskId}`);
 
   return lines.join("\n");
 }
@@ -239,6 +243,7 @@ function renderAssets(data) {
   const providerResponse = data?.result?.provider_response;
   const videoUrl = data?.result?.video_url || providerResponse?.video_url || providerResponse?.output?.video_url || providerResponse?.data?.video_url;
   const taskId = data?.result?.task_id || providerResponse?.output?.task_id || providerResponse?.task_id || providerResponse?.data?.task_id || providerResponse?.id;
+
   if (videoUrl) {
     const card = document.createElement("div");
     card.className = "asset-card video-card";
@@ -269,9 +274,11 @@ function setLoading(loading, options = {}) {
 
 async function submitTask(event) {
   event.preventDefault();
+
   const loadingOptions = state.activeFeature === "image_to_video"
     ? { title: "视频生成中", text: "模型正在处理图片并生成视频，这个过程通常比文字或图片更久。" }
     : { title: "接口调用中", text: "正在等待模型返回结果，请稍候..." };
+
   setLoading(true, loadingOptions);
   resultBox.textContent = "处理中...";
   assetGallery.innerHTML = "";
@@ -309,6 +316,7 @@ async function submitTask(event) {
         body: JSON.stringify(payload),
       });
     }
+
     const data = await response.json();
     renderResult(data);
     await loadTasks();
@@ -323,10 +331,12 @@ async function loadTasks() {
   const response = await fetch("/api/tasks");
   const tasks = await response.json();
   taskList.innerHTML = "";
+
   if (!tasks.length) {
     taskList.textContent = "暂无任务。";
     return;
   }
+
   tasks.slice(0, 8).forEach((task) => {
     const item = document.createElement("div");
     item.className = "task-item";
@@ -350,6 +360,7 @@ function renderUploadPreview() {
   const minImages = model?.min_images || 1;
   const maxImages = model?.max_images || 6;
   imageLimitTip.textContent = `当前模型要求上传 ${minImages}-${maxImages} 张图片，你已选择 ${imageCount} 张。`;
+
   [...imageInput.files].forEach((file) => {
     const img = document.createElement("img");
     img.src = URL.createObjectURL(file);
@@ -376,6 +387,7 @@ async function bootstrap() {
 taskForm.addEventListener("submit", submitTask);
 refreshTasks.addEventListener("click", loadTasks);
 imageInput.addEventListener("change", renderUploadPreview);
+
 bootstrap().catch((error) => {
   resultBox.textContent = `初始化失败：${error.message}`;
 });

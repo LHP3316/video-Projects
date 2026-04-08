@@ -12,7 +12,9 @@
         <div>
           <p class="eyebrow">FastAPI API Console</p>
           <h1>AI 创作控制台</h1>
-          <p class="hero-text">主 Tab 为文字拆解、文生图、图生视频；文字拆解与图生视频使用系统内置提示词模板，用户只需填写正文、参数和图片。</p>
+          <p class="hero-text">
+            主 Tab 为文字拆解、文生图、图生视频；文字拆解与图生视频使用系统内置提示词模板，用户只需填写正文、参数和图片。
+          </p>
         </div>
         <div class="status-card">
           <span class="status-dot"></span>
@@ -26,7 +28,7 @@
       <main class="layout">
         <section class="panel">
           <div class="tabs main-tabs" id="mainTabs"></div>
-          <div class="feature-summary" id="featureSummary"></div>
+          <div class="feature-summary hidden" id="featureSummary"></div>
           <div class="tabs model-tabs" id="modelTabs"></div>
 
           <form class="form-grid" id="taskForm">
@@ -37,7 +39,7 @@
 
             <label class="field full" id="sourceField">
               <span id="sourceLabel">待处理文本</span>
-              <textarea id="sourceInput" rows="5" placeholder="文字拆解：粘贴剧本；文生图：可填写画面补充说明。"></textarea>
+              <textarea id="sourceInput" rows="5" placeholder="文字拆解：粘贴文案；文生图：可填写画面补充说明。"></textarea>
             </label>
 
             <label class="field full hidden" id="imageUploadField">
@@ -49,7 +51,7 @@
 
             <label class="field full hidden" id="promptField">
               <span id="promptLabel">提示词</span>
-              <textarea id="promptInput" rows="4" placeholder="填写拆解提示词、文生图提示词或视频提示词"></textarea>
+              <textarea id="promptInput" rows="4" placeholder="填写文生图提示词。"></textarea>
             </label>
 
             <div class="parameter-grid full" id="parameterGrid"></div>

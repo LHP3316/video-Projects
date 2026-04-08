@@ -1316,3 +1316,6 @@ async def get_video_task_result(task_id: str) -> dict[str, Any]:
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
+
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
