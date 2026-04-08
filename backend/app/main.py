@@ -260,7 +260,7 @@ def build_model_tabs() -> list[FeatureTab]:
                     max_images=2,
                     parameters=[
                         *VIDEO_PROMPT_FIELDS,
-                        {"key": "model", "label": "模型", "type": "select", "default": "doubao-seedance-2-0-250528", "options": ["doubao-seedance-2-0-250528"]},
+                        {"key": "model", "label": "模型", "type": "select", "default": "doubao-seedance-2-0-260128", "options": ["doubao-seedance-2-0-260128"]},
                         {"key": "resolution", "label": "分辨率", "type": "select", "default": "720p", "options": ["480p", "720p"]},
                         {"key": "ratio", "label": "画幅比例", "type": "select", "default": "adaptive", "options": ["adaptive", "21:9", "16:9", "4:3", "1:1", "3:4", "9:16"]},
                         {"key": "duration", "label": "时长", "type": "select", "default": "5", "options": ["-1", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]},
@@ -961,36 +961,16 @@ async def call_video_model(
         remote_task_id = extract_task_id(data)
         if not remote_task_id:
             raise RuntimeError(f"{model.name} 提交成功，但未拿到远端任务 ID：{json.dumps(data, ensure_ascii=False)[:1200]}")
-        polled = await poll_seedance_video_result(
-            effective_token,
-            remote_task_id,
-            model.name,
-            max_attempts=int_parameter(parameters.get("max_attempts"), default=12, minimum=1, maximum=60),
-            poll_interval=int_parameter(parameters.get("poll_interval"), default=8, minimum=3, maximum=30),
-            timeout=int_parameter(parameters.get("timeout"), default=180, minimum=30, maximum=900),
-        )
-        if polled.get("video_url"):
-            return {
-                "message": "即梦首帧生成视频调用完成",
-                "task_id": remote_task_id,
-                "video_url": polled["video_url"],
-                "task_status": "succeeded",
-                "provider_response": data,
-                "query_response": polled.get("provider_response"),
-                "query_payload": polled.get("query_payload"),
-            }
         return {
-            "message": f"即梦首帧生成视频任务已提交，轮询 {polled.get('attempt', 0)} 次后仍未完成，请使用远端任务 ID 继续查询。",
+            "message": "即梦首帧生成视频任务已提交，请使用任务 ID 查询生成结果。",
             "task_id": remote_task_id,
-            "task_status": polled.get("status") or "running",
+            "task_status": "running",
             "provider_response": data,
-            "query_response": polled.get("provider_response"),
-            "query_payload": polled.get("query_payload"),
         }
 
     if model_id == "jimeng_flf_i2v":
         body = {
-            "model": string_parameter(parameters.get("model"), "doubao-seedance-2-0-250528"),
+            "model": string_parameter(parameters.get("model"), "doubao-seedance-2-0-260128"),
             "input": [
                 {"type": "text", "text": prompt},
                 {"type": "image_url", "image_url": {"url": image_data_url(encoded_images[0])}, "role": "first_frame"},
@@ -1014,31 +994,11 @@ async def call_video_model(
         remote_task_id = extract_task_id(data)
         if not remote_task_id:
             raise RuntimeError(f"{model.name} 提交成功，但未拿到远端任务 ID：{json.dumps(data, ensure_ascii=False)[:1200]}")
-        polled = await poll_seedance_video_result(
-            effective_token,
-            remote_task_id,
-            model.name,
-            max_attempts=int_parameter(parameters.get("max_attempts"), default=12, minimum=1, maximum=60),
-            poll_interval=int_parameter(parameters.get("poll_interval"), default=8, minimum=3, maximum=30),
-            timeout=int_parameter(parameters.get("timeout"), default=180, minimum=30, maximum=900),
-        )
-        if polled.get("video_url"):
-            return {
-                "message": "即梦首尾帧生成视频调用完成",
-                "task_id": remote_task_id,
-                "video_url": polled["video_url"],
-                "task_status": "succeeded",
-                "provider_response": data,
-                "query_response": polled.get("provider_response"),
-                "query_payload": polled.get("query_payload"),
-            }
         return {
-            "message": f"即梦首尾帧生成视频任务已提交，轮询 {polled.get('attempt', 0)} 次后仍未完成，请使用远端任务 ID 继续查询。",
+            "message": "即梦首尾帧生成视频任务已提交，请使用任务 ID 查询生成结果。",
             "task_id": remote_task_id,
-            "task_status": polled.get("status") or "running",
+            "task_status": "running",
             "provider_response": data,
-            "query_response": polled.get("provider_response"),
-            "query_payload": polled.get("query_payload"),
         }
 
     if model_id == "kling_i2v":
