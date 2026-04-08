@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+FRONTEND_DIR="$ROOT_DIR/frontend"
+DIST_DIR="$FRONTEND_DIR/dist"
+STATIC_DIR="$ROOT_DIR/backend/app/static"
+LOG_DIR="$ROOT_DIR/backend/logs"
+LOG_FILE="$LOG_DIR/frontend_build.log"
+
+# shellcheck disable=SC1091
+source "$ROOT_DIR/load-env.sh"
+
+mkdir -p "$LOG_DIR"
+
+if [[ ! -d "$FRONTEND_DIR" ]]; then
+  echo "未找到前端目录，跳过前端构建。"
+  exit 0
+fi
+
+if ! command -v npm >/dev/null 2>&1; then
+  echo "未检测到 npm，跳过前端构建，继续使用现有静态资源。"
+  exit 0
+fi
+
+echo "开始构建前端..."
+
+pushd "$FRONTEND_DIR" >/dev/null
+if [[ ! -d node_modules ]]; then
+  echo "未检测到 node_modules，执行 npm install..."
+  npm install >>"$LOG_FILE" 2>&1
+fi
+npm run build >>"$LOG_FILE" 2>&1
+popd >/dev/null
+
+rm -rf "$STATIC_DIR"
+mkdir -p "$STATIC_DIR"
+cp -R "$DIST_DIR"/. "$STATIC_DIR"/
+
+echo "前端构建并同步完成：$STATIC_DIR"

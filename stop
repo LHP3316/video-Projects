@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT_DIR"
+
+PID_FILE="backend/logs/api.pid"
+if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" >/dev/null 2>&1; then
+  kill "$(cat "$PID_FILE")" || true
+  rm -f "$PID_FILE"
+  echo "api 已停止"
+else
+  echo "api 未运行"
+fi

@@ -1,0 +1,387 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  background: #0f1220;
+  color: #f4f7fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(103, 95, 255, 0.35), transparent 32rem),
+    linear-gradient(135deg, #0f1220 0%, #15182a 55%, #10131f 100%);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+#app {
+  width: min(1280px, calc(100vw - 40px));
+  margin: 0 auto;
+  padding: 36px 0;
+}
+
+.hero {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #9ba7ff;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 56px);
+  line-height: 1.05;
+}
+
+.hero-text {
+  max-width: 760px;
+  color: #aab2c5;
+  line-height: 1.8;
+}
+
+.status-card,
+.panel {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(19, 23, 40, 0.82);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(14px);
+}
+
+.status-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 320px;
+  min-width: 280px;
+  border-radius: 22px;
+  padding: 20px;
+}
+
+.status-card p {
+  margin: 6px 0 0;
+  color: #aab2c5;
+}
+
+.status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #36e58a;
+  box-shadow: 0 0 22px rgba(54, 229, 138, 0.9);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 24px;
+}
+
+.panel {
+  border-radius: 28px;
+  padding: 24px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tab-button {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: #dfe6ff;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.tab-button:hover,
+.tab-button.active {
+  color: #0f1220;
+  background: linear-gradient(135deg, #8fffd2, #8ea2ff);
+  border-color: transparent;
+}
+
+.model-tabs {
+  margin: 18px 0 22px;
+}
+
+.feature-summary {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  color: #c9d2ea;
+  background: rgba(255, 255, 255, 0.06);
+  line-height: 1.7;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #d6dcf0;
+}
+
+.field.full,
+.full {
+  grid-column: 1 / -1;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#imageUploadField {
+  display: none;
+}
+
+body[data-feature="image_to_video"] #imageUploadField {
+  display: flex;
+}
+
+body[data-feature="image_to_video"] #sourceField {
+  display: none;
+}
+
+.field span {
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 16px;
+  color: #f5f7ff;
+  background: rgba(5, 8, 18, 0.72);
+  padding: 13px 14px;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #8ea2ff;
+  box-shadow: 0 0 0 4px rgba(142, 162, 255, 0.15);
+}
+
+.parameter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.warning {
+  border: 1px solid rgba(255, 196, 87, 0.35);
+  border-radius: 16px;
+  color: #ffe7a3;
+  background: rgba(255, 196, 87, 0.1);
+  padding: 14px;
+  line-height: 1.7;
+}
+
+.preview-grid,
+.asset-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.preview-grid img,
+.asset-card img,
+.asset-card video {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.preview-grid img {
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.asset-gallery {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  margin-bottom: 22px;
+}
+
+.asset-card {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 12px;
+  color: #dbe3f7;
+  overflow: hidden;
+}
+
+.asset-card span {
+  display: block;
+  margin-top: 8px;
+  color: #aab2c5;
+}
+
+.asset-card video {
+  min-height: 160px;
+}
+
+.primary-button,
+.ghost-button {
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.primary-button {
+  padding: 15px 20px;
+  color: #0c1020;
+  background: linear-gradient(135deg, #8fffd2, #8ea2ff);
+}
+
+.ghost-button {
+  padding: 10px 14px;
+  color: #e8edff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.side-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+h2,
+h3 {
+  margin: 0 0 16px;
+}
+
+.result-box,
+.task-item {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 16px;
+}
+
+.loading-panel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.loading-panel p {
+  margin: 6px 0 0;
+  color: #aab2c5;
+  line-height: 1.6;
+}
+
+.loading-spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.18);
+  border-top-color: #8fffd2;
+  animation: spin 0.9s linear infinite;
+}
+
+.result-box {
+  min-height: 220px;
+  white-space: pre-wrap;
+  color: #dbe3f7;
+  line-height: 1.65;
+  margin-bottom: 24px;
+  overflow: auto;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-item {
+  color: #cbd4e8;
+  cursor: pointer;
+}
+
+.task-item strong {
+  display: block;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.badge {
+  display: inline-flex;
+  margin-top: 10px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: #102012;
+  background: #8fffd2;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.primary-button:disabled,
+.ghost-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 980px) {
+  .hero,
+  .layout {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .status-card {
+    width: auto;
+  }
+
+  .parameter-grid {
+    grid-template-columns: 1fr;
+  }
+}
